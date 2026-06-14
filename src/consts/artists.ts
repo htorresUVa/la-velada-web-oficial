@@ -4,36 +4,43 @@ export const ARTISTS: Artist[] = [
   {
     id: 'aitana',
     name: 'Aitana',
-    image: '/images/artists/aitana.webp',
-  },
-  {
-    id: 'delarose',
-    name: 'Delarose',
-    image: '/images/artists/delarose.webp',
-  },
-  {
-    id: 'eladiocarrion',
-    name: 'Eladio Carrion',
-    image: '/images/artists/eladiocarrion.webp',
-  },
-  {
-    id: 'grupofrontera',
-    name: 'Grupo Frontera',
-    image: '/images/artists/grupofrontera.webp',
-  },
-  {
-    id: 'losdelrio',
-    name: 'Los Del Río',
-    image: '/images/artists/losdelrio.webp',
-  },
-  {
-    id: 'melendi',
-    name: 'Melendi',
-    image: '/images/artists/melendi.webp',
+    image: '/artists/aitana.jpeg',
+    tier: 1,
   },
   {
     id: 'myketowers',
     name: 'Myke Towers',
-    image: '/images/artists/myketowers.webp',
+    image: '/artists/myke.jpeg',
+    tier: 1,
+  },
+  {
+    id: 'eladiocarrion',
+    name: 'Eladio Carrion',
+    image: '/artists/eladio.jpeg',
+    tier: 2,
+  },
+  {
+    id: 'grupofrontera',
+    name: 'Grupo Frontera',
+    image: '/artists/frontera.jpeg',
+    tier: 2,
+  },
+  {
+    id: 'melendi',
+    name: 'Melendi',
+    image: '/artists/melendi.jpeg',
+    tier: 3,
+  },
+  {
+    id: 'losdelrio',
+    name: 'Los Del Río',
+    image: '/artists/losdelrio.jpeg',
+    tier: 3,
+  },
+  {
+    id: 'delarose',
+    name: 'Delarose',
+    image: '/artists/delarose.jpeg',
+    tier: 3,
   },
 ]
