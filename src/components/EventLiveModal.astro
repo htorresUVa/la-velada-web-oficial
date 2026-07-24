@@ -404,7 +404,7 @@ const eventEnd = new Date(EVENT_END_ISO).getTime()
     function mountIframe() {
       if (frame!.childElementCount > 0) return
       const iframe = document.createElement('iframe')
-      iframe.src = `https://www.youtube-nocookie.com/embed/live_stream?channel=${encodeURIComponent(channel!)}&autoplay=1&playsinline=1`
+      iframe.src = `https://www.youtube-nocookie.com/embed/live_stream?channel=${encodeURIComponent(channel!)}&autoplay=1&mute=1&playsinline=1`
       iframe.allow =
         'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen'
       iframe.setAttribute('allowfullscreen', '')
