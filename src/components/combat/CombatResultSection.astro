@@ -6,15 +6,16 @@ import {
   getWinnerWord,
   type BattleResult,
 } from '@/consts/battle-results'
-import type { Boxer } from '@/consts/boxers'
+import type { Boxer, BoxerImageVariants } from '@/consts/boxers'
 
 interface Props {
   result: BattleResult
   winner: Boxer
   loser: Boxer
+  winnerImage: BoxerImageVariants
 }
 
-const { result, winner, loser } = Astro.props
+const { result, winner, loser, winnerImage } = Astro.props
 const winnerWord = getWinnerWord(winner.gender)
 const decision = getDecisionLabel(result)
 const score = `${result.votes[0]}-${result.votes[1]}`
@@ -33,10 +34,25 @@ const score = `${result.votes[0]}-${result.votes[1]}`
     </div>
 
     <div class="result-card">
+      <div class="result-avatar">
+        <picture>
+          <source type="image/avif" srcset={winnerImage.avif} />
+          <source type="image/webp" srcset={winnerImage.webp} />
+          <img
+            src={winnerImage.webp}
+            alt={winner.name}
+            loading="lazy"
+            decoding="async"
+            class="result-avatar-img"
+          />
+        </picture>
+      </div>
+
       <p class="result-eyebrow font-cinzel">{winnerWord}</p>
-      <p class="result-winner font-cinzel">{winner.name}</p>
+      <p class="result-winner font-cinzel">
+        {winner.name} <span class="result-score">ganó {score}</span>
+      </p>
       <p class="result-decision font-cinzel">{decision}</p>
-      <p class="result-score font-cinzel" aria-hidden="true">{score}</p>
 
       <CombatJudgeVotes
         result={result}
@@ -84,6 +100,22 @@ const score = `${result.votes[0]}-${result.votes[1]}`
     text-align: center;
   }
 
+  .result-avatar {
+    width: 5.5rem;
+    height: 5.5rem;
+    margin-bottom: 0.9rem;
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+
+  .result-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    filter: drop-shadow(0 0 14px color-mix(in srgb, var(--color-theme-gold) 65%, transparent));
+  }
+
   .result-eyebrow {
     margin: 0;
     font-size: 0.62rem;
@@ -95,12 +127,16 @@ const score = `${result.votes[0]}-${result.votes[1]}`
 
   .result-winner {
     margin: 0.35rem 0 0;
-    font-size: clamp(1.55rem, 1.1rem + 2vw, 2.35rem);
+    font-size: clamp(1.4rem, 1.05rem + 1.6vw, 2.05rem);
     font-weight: 900;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
     color: var(--color-theme-cream);
     text-shadow: 0 2px 24px color-mix(in srgb, var(--color-theme-gold) 35%, transparent);
+  }
+
+  .result-score {
+    color: var(--color-theme-gold);
   }
 
   .result-decision {
@@ -110,13 +146,5 @@ const score = `${result.votes[0]}-${result.votes[1]}`
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: color-mix(in srgb, var(--color-theme-cream) 68%, transparent);
-  }
-
-  .result-score {
-    margin: 0.35rem 0 0;
-    font-size: 1.35rem;
-    font-weight: 900;
-    letter-spacing: 0.08em;
-    color: var(--color-theme-gold);
   }
 </style>
