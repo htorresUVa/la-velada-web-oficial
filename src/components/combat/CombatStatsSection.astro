@@ -2,6 +2,7 @@
 import CountryFlag from '@/components/CountryFlag.astro'
 import SectionDivider from '@/components/SectionDivider.astro'
 import type { Boxer, BoxerImageVariants } from '@/consts/boxers'
+import { getWinnerWord } from '@/consts/battle-results'
 import { formatFollowers, getSocialMetricValue } from '@/lib/socials'
 
 interface CombatStat {
@@ -18,9 +19,13 @@ interface Props {
   boxer1Select: BoxerImageVariants
   boxer2Select: BoxerImageVariants
   stats: CombatStat[]
+  /** Id del boxeador ganador, si el combate ya se ha disputado. */
+  winnerId?: string | null
 }
 
-const { boxer1, boxer2, boxer1Select, boxer2Select, stats } = Astro.props
+const { boxer1, boxer2, boxer1Select, boxer2Select, stats, winnerId = null } = Astro.props
+const boxer1IsWinner = winnerId === boxer1.id
+const boxer2IsWinner = winnerId === boxer2.id
 
 // Seguidores totales sumando todas las redes (followers o oyentes/mes).
 const sumFollowers = (boxer: Boxer) =>
@@ -56,10 +61,11 @@ const hasFollowers = followersTotal > 0
     <div class="mb-6 grid grid-cols-[1fr_auto_1fr] items-center gap-4">
       <a
         href={`/boxeadores/${boxer1.id}`}
-        class="boxer-stat-link flex flex-col items-center gap-2"
+        class:list={['boxer-stat-link flex flex-col items-center gap-2', { 'is-winner': boxer1IsWinner }]}
         aria-label={`Ver el perfil de ${boxer1.name}`}
       >
         <div class="boxer-avatar">
+          <span aria-hidden="true" class="boxer-avatar-glow" />
           <picture>
             <source type="image/avif" srcset={boxer1Select.avif} />
             <source type="image/webp" srcset={boxer1Select.webp} />
@@ -72,8 +78,16 @@ const hasFollowers = followersTotal > 0
             />
           </picture>
         </div>
+        {
+          boxer1IsWinner && (
+            <span class="boxer-winner-badge" aria-hidden="true">
+              <span class="boxer-winner-star">★</span>
+              <span class="boxer-winner-label">{getWinnerWord(boxer1.gender)}</span>
+            </span>
+          )
+        }
         <span
-          class="text-center font-cinzel text-[0.65rem] font-bold tracking-[0.16em] text-theme-cream/90 uppercase"
+          class="boxer-stat-name text-center font-cinzel text-[0.65rem] font-bold tracking-[0.16em] text-theme-cream/90 uppercase"
         >
           {boxer1.name}
         </span>
@@ -85,10 +99,11 @@ const hasFollowers = followersTotal > 0
 
       <a
         href={`/boxeadores/${boxer2.id}`}
-        class="boxer-stat-link flex flex-col items-center gap-2"
+        class:list={['boxer-stat-link flex flex-col items-center gap-2', { 'is-winner': boxer2IsWinner }]}
         aria-label={`Ver el perfil de ${boxer2.name}`}
       >
         <div class="boxer-avatar">
+          <span aria-hidden="true" class="boxer-avatar-glow" />
           <picture>
             <source type="image/avif" srcset={boxer2Select.avif} />
             <source type="image/webp" srcset={boxer2Select.webp} />
@@ -101,8 +116,16 @@ const hasFollowers = followersTotal > 0
             />
           </picture>
         </div>
+        {
+          boxer2IsWinner && (
+            <span class="boxer-winner-badge" aria-hidden="true">
+              <span class="boxer-winner-star">★</span>
+              <span class="boxer-winner-label">{getWinnerWord(boxer2.gender)}</span>
+            </span>
+          )
+        }
         <span
-          class="text-center font-cinzel text-[0.65rem] font-bold tracking-[0.16em] text-theme-cream/90 uppercase"
+          class="boxer-stat-name text-center font-cinzel text-[0.65rem] font-bold tracking-[0.16em] text-theme-cream/90 uppercase"
         >
           {boxer2.name}
         </span>
@@ -182,6 +205,7 @@ const hasFollowers = followersTotal > 0
   }
 
   .boxer-avatar {
+    position: relative;
     width: 5rem;
     height: 5rem;
     border-radius: 9999px;
@@ -195,6 +219,19 @@ const hasFollowers = followersTotal > 0
       border-color 220ms ease,
       box-shadow 220ms ease,
       transform 220ms ease;
+  }
+
+  .boxer-avatar-glow {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    opacity: 0;
+    background: radial-gradient(
+      70% 60% at 50% 20%,
+      color-mix(in srgb, var(--color-theme-gold) 55%, transparent),
+      transparent 68%
+    );
+    transition: opacity 300ms ease;
   }
 
   .boxer-stat-link {
@@ -214,6 +251,60 @@ const hasFollowers = followersTotal > 0
     border-radius: 0.5rem;
     outline: 2px solid var(--color-theme-gold);
     outline-offset: 0.45rem;
+  }
+
+  /* Ganador del combate: aro dorado permanente + resplandor + nombre en oro,
+     mismo lenguaje visual que la tarjeta de listado (CombatCard). */
+  .boxer-stat-link.is-winner .boxer-avatar {
+    border-color: var(--color-theme-gold);
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--color-theme-gold) 25%, transparent),
+      0 8px 24px rgba(0, 0, 0, 0.5),
+      0 0 22px color-mix(in srgb, var(--color-theme-gold) 30%, transparent);
+  }
+
+  .boxer-stat-link.is-winner .boxer-avatar-glow {
+    opacity: 0.9;
+  }
+
+  .boxer-stat-link.is-winner .boxer-stat-name {
+    color: color-mix(in srgb, var(--color-theme-gold) 62%, var(--color-theme-cream));
+  }
+
+  .boxer-winner-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    max-width: 100%;
+    padding: 0.24rem 0.5rem 0.24rem 0.34rem;
+    border-radius: 9999px;
+    color: var(--color-theme-midnight);
+    background: linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--color-theme-gold) 92%, white) 0%,
+      var(--color-theme-gold) 55%,
+      color-mix(in srgb, var(--color-theme-gold) 72%, #6b4f1e) 100%
+    );
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, white 35%, transparent),
+      0 4px 12px color-mix(in srgb, var(--color-theme-gold) 45%, transparent);
+  }
+
+  .boxer-winner-star {
+    flex-shrink: 0;
+    font-size: 0.62rem;
+    line-height: 1;
+  }
+
+  .boxer-winner-label {
+    font-family: var(--font-cinzel), var(--font-fallback);
+    font-size: 0.54rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1;
+    white-space: nowrap;
   }
 
   .stats-table {
