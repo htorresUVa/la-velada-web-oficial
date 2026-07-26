@@ -57,6 +57,7 @@ const winner = battleResult
     : boxer2
   : null
 const loser = battleResult && winner ? (winner.id === boxer1.id ? boxer2 : boxer1) : null
+const winnerSelectImage = winner ? (winner.id === boxer1.id ? boxer1Select : boxer2Select) : null
 
 const title = `${battle.title} — Combate ${String(battle.number).padStart(2, '0')} de La Velada del Año VI`
 const description =
@@ -202,8 +203,13 @@ const breadcrumbJsonLd = {
     <div aria-hidden="true" class="combat-detail-bg-veil"></div>
 
     {
-      battleResult && winner && loser && (
-        <CombatResultSection result={battleResult} winner={winner} loser={loser} />
+      battleResult && winner && loser && winnerSelectImage && (
+        <CombatResultSection
+          result={battleResult}
+          winner={winner}
+          loser={loser}
+          winnerImage={winnerSelectImage}
+        />
       )
     }
 
@@ -213,6 +219,7 @@ const breadcrumbJsonLd = {
       boxer1Select={boxer1Select}
       boxer2Select={boxer2Select}
       stats={stats}
+      winnerId={battleResult?.winnerId}
     />
 
     <section class="combat-prediction" aria-labelledby="combat-prediction-title">
